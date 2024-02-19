@@ -1,8 +1,19 @@
 def bytes_to_base64(bytes):
     value = int.from_bytes(bytes, byteorder="big")
     output = []
-    while value > 0:
-        segment = value & 0b111111
+    n_bits = len(bytes) * 8
+    i_bit = 0
+    while i_bit < n_bits:
+        offset = n_bits - i_bit - 6
+        if offset > -1:
+            mask = 0b111111 << offset
+        else:
+            mask = 0b111111 >> abs(offset )
+        segment = value & mask
+        if offset > -1:
+            segment = segment >> offset
+        else:
+            segment = segment << abs(offset)
         if segment < 26: # A-Z
             c = chr(ord("A") + segment)
         elif segment < 52: # a-z
@@ -14,8 +25,7 @@ def bytes_to_base64(bytes):
         else: # /
             c = "/"
         output.append(c)
-        value = value >> 6
-    output = output[::-1]
+        i_bit += 6
     while len(output) % 4 != 0:
         output.append('=')
     return ''.join(output)
@@ -39,6 +49,3 @@ def hex_to_bytes(hex):
 def hex_to_base64(hex):
     return bytes_to_base64(hex_to_bytes(hex))
 
-input = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
-print(hex_to_bytes(input))
-print(hex_to_base64(input))
