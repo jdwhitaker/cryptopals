@@ -22,6 +22,6 @@ def test_2():
         prefix + "12345",
     ]
     for input in inputs:
-        input = bytes("This is another input! 1234.", encoding="ASCII")
+        input = bytes(input, encoding="ASCII")
         output = solution.bytes_to_base64(input)
         assert base64.b64decode(output) == input
