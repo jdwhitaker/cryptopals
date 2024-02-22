@@ -3,7 +3,6 @@ def fixed_xor(bytes1, bytes2):
     for b1, b2 in zip(bytes1, bytes2):
         o = b1 ^ b2
         output.append(o)
-    print(output)
     return bytes(output)
 
 def bytes_to_hex(bytes):

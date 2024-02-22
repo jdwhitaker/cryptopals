@@ -1,14 +1,20 @@
 from ..challenge_2.solution import fixed_xor
 
 def decryption_metric(bs):
-    def is_alpha(b):
+    def is_normal(b):
         return (
-            (b >= ord('A') and b <= ord('Z')) or 
             (b >= ord('a') and b <= ord('z'))
         )
 
-    alphanum = [b for b in bs if is_alpha(b)]
-    return len(alphanum) / len(bs)
+    def is_weird(b):
+        return (
+            (b < 32) or 
+            (b >= 123)
+        )
+
+    normal = len([b for b in bs if is_normal(b)])
+    weird = len([b for b in bs if is_weird(b)])
+    return (normal / len(bs)) - (weird / len(bs))
 
 def crack_single_xor_cipher(bs):
     winner_metric = 0
@@ -17,8 +23,7 @@ def crack_single_xor_cipher(bs):
         key = bytes([k for i in range(len(bs))])
         decrypted = fixed_xor(bs, key)
         metric = decryption_metric(decrypted)
-        print(k, metric, decrypted)
-        if metric > winner_metric:
+        if winner_value == None or metric > winner_metric:
             winner_metric = metric
             winner_value = decrypted
     return winner_value
