@@ -1,4 +1,6 @@
 def fixed_xor(bytes1, bytes2):
+    if len(bytes2) == 1:
+        bytes2 = bytes2 * len(bytes1)
     output = []
     for b1, b2 in zip(bytes1, bytes2):
         o = b1 ^ b2
