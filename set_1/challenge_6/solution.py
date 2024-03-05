@@ -64,39 +64,24 @@ def hamming_distance(input1, input2):
                 distance += 1
     return distance
 
+def mean_hamming_score(input, blocksize):
+    total = 0
+    n = 0
+    blocks = to_blocks(input, blocksize)
+    for i in range(len(blocks) - 1):
+        if n > 1_000_000: # sample size ~1,000,000
+            break
+        for j in range(i+1, len(blocks)):
+            metric = hamming_distance(blocks[i], blocks[j]) 
+            n += 1
+            total += metric
+    metric = (total / n) / blocksize
+    return metric
+
 def get_keylength(input):
     keylengths = []
     for keylength in range(2, 41):
-        '''
-        segments = []
-        n_segments = len(input) // keylength
-        if n_segments <= 1:
-            break
-        for i in range(n_segments):
-            segments.append(input[i*keylength:i*keylength + keylength])
-        hamming_distances = []
-        for i in range(n_segments - 1):
-            hamming_distances.append(hamming_distance(segments[i], segments[i+1]) / keylength)
-        mean_hamming_distance = 0
-        for i in hamming_distances:
-            mean_hamming_distance += i
-        mean_hamming_distance /= len(hamming_distances)
-        keylengths.append((keylength, mean_hamming_distance))
-        '''
-        total = 0
-        n = 0
-        blocks = to_blocks(input, keylength)
-        for i in range(len(blocks) - 1):
-            if n > 1_000_000: # sample size ~1,000,000
-                break
-            for j in range(i+1, len(blocks)):
-                metric = hamming_distance(blocks[i], blocks[j]) 
-                # print(metric, blocks[i], blocks[j])
-                # print(["{:08b}".format(b) for b in blocks[i]])
-                # print(["{:08b}".format(b) for b in blocks[j]])
-                n += 1
-                total += metric
-        metric = (total / n) / keylength
+        metric = mean_hamming_score(input, keylength)
         keylengths.append((keylength, metric))
         print((keylength, metric))
     keylengths = sorted(keylengths, key = lambda i: i[1])

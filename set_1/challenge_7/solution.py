@@ -7,4 +7,7 @@ def decrypt_ecb(ciphertext, key):
         algorithms.AES(key),
         modes.ECB()
     ).decryptor()
-    return decryptor.update(ciphertext) + decryptor.finalize()
+    output = decryptor.update(ciphertext) + decryptor.finalize()
+    padding = output[-1]
+    output = output[:-padding]
+    return output
