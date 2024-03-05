@@ -33,7 +33,7 @@ def xtest_base64_decode():
         assert input == base64_decode(enc_input)
 
 def xtest_keylength():
-    with open(os.path.join(os.path.dirname(__file__), 'test.txt'), 'rb') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'res', 'test.txt'), 'rb') as f:
         input = f.read()
     k = b"SECRET"
     enc_input = encrypt_repeating_key_xor(input, k)
@@ -41,7 +41,7 @@ def xtest_keylength():
     assert len(k) == key_length
 
 def xtest_break_repeating_key_xor2():
-    with open(os.path.join(os.path.dirname(__file__), 'test.txt'), 'rb') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'res', 'test.txt'), 'rb') as f:
         input = f.read()
     enc_input = encrypt_repeating_key_xor(input, b"KEY")
     key = break_repeating_key_xor(enc_input)
@@ -49,7 +49,7 @@ def xtest_break_repeating_key_xor2():
     assert decrypted == input
 
 def test_break_repeating_key_xor():
-    with open(os.path.join(os.path.dirname(__file__), '6.txt'), 'r') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'res', '6.txt'), 'r') as f:
         input = f.read()
     input = base64_decode(input)
     key = break_repeating_key_xor(input)
