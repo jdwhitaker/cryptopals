@@ -4,7 +4,7 @@ from ..challenge_1.solution import hex_to_bytes
 from ..challenge_2.solution import fixed_xor
 
 def detect_single_character_xor():
-    with open('./set_1/challenge_4/4.txt', 'r') as f:
+    with open('./solutions/set_1/challenge_4/4.txt', 'r') as f:
         inputs = f.read().split('\n')
     outputs = []
     for input in inputs:
