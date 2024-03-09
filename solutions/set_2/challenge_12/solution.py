@@ -3,6 +3,10 @@ from ..challenge_9.solution import pkcs7_padding
 from ..challenge_10.solution import aes_cbc_encrypt
 from ..challenge_10.solution import aes_ecb_encrypt
 from ...set_1.challenge_6.solution import mean_hamming_score, to_blocks
+from ...set_1.challenge_6.solution import base64_decode
+
+plaintext_b64 = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
+plaintext = base64_decode(plaintext_b64)
 
 key = None
 random.seed(0)
@@ -20,14 +24,17 @@ def aes_128_ecb(chosen_string, plaintext):
     output = aes_ecb_encrypt(input, key)
     return output
 
-def get_block_length(plaintext):
-    prior_length = len(aes_128_ecb(b'', plaintext))
+def aes_128_ecb_oracle(chosen_string):
+    return aes_128_ecb(chosen_string, plaintext)
+
+def get_block_length():
+    prior_length = len(aes_128_ecb_oracle(b''))
     first = True
     block_length = 0
     i = 1
     while True:
         chosen_text = b"A"*i
-        ciphertext = aes_128_ecb(chosen_text, plaintext)
+        ciphertext = aes_128_ecb_oracle(chosen_text)
         length = len(ciphertext)
         if not first and prior_length != length:
             return block_length + 1
@@ -39,7 +46,7 @@ def get_block_length(plaintext):
         prior_length = length
         i += 1
 
-def crack_ecb(plaintext, block_length):
+def crack_ecb(block_length):
     cracked = []
     offset = 0
     while True:
@@ -50,10 +57,10 @@ def crack_ecb(plaintext, block_length):
         prefix = b"A"*(block_length-ibyte-1)
         for i in range(256):
             value = prefix + bytes(cracked) + bytes([i])
-            key = aes_128_ecb(value, plaintext)[block_length*iblock:block_length*(iblock+1)]
+            key = aes_128_ecb_oracle(value)[block_length*iblock:block_length*(iblock+1)]
             lookup[key] = value
         print("prefix:", prefix)
-        ciphertext = aes_128_ecb(prefix, plaintext)
+        ciphertext = aes_128_ecb_oracle(prefix)
         output = ciphertext[block_length*iblock:block_length*(iblock+1)]
         print(f"output ({len(output)}): {output}")
         if not output in lookup:
