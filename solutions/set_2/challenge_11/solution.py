@@ -10,7 +10,6 @@ def generate_random_aes_key():
     return random.randbytes(16)
 
 def encryption_oracle(input):
-    print('encryption_oracle')
     random_before = random.randbytes(random.randint(5,10))
     random_post = random.randbytes(random.randint(5,10))
     input = random_before + input + random_post
@@ -32,9 +31,7 @@ def classify_ecb_cbc(input):
         if not b in freqdist:
             freqdist[b] = 0
         freqdist[b] += 1
-    print(freqdist)
     metric = sum([v for k,v in freqdist.items()]) / len(freqdist)
-    print(metric)
     if metric > 1.001:
         return 'ecb'
     else:
