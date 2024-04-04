@@ -1,6 +1,8 @@
 import pytest
 from .solution import parse_kv, profile_for, encrypt_profile, decrypt_profile
 from ...set_1.challenge_6.solution import to_blocks
+from ...set_2.challenge_9.solution import pkcs7_padding
+from ...set_2.challenge_15.solution import pkcs7_unpad
 
 def test_parse_kv():
     input = 'foo=bar&baz=qux&zap=zazzle'

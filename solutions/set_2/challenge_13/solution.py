@@ -3,6 +3,8 @@ from ..challenge_9.solution import pkcs7_padding
 from ...set_1.challenge_7.solution import decrypt_ecb
 from ..challenge_10.solution import aes_ecb_encrypt
 from ..challenge_12.solution import get_random_aes_key
+from ...set_2.challenge_9.solution import pkcs7_padding
+from ...set_2.challenge_15.solution import pkcs7_unpad
 
 key = get_random_aes_key()
 
@@ -37,6 +39,7 @@ def encrypt_profile(email):
 
 def decrypt_profile(profile):
     decrypted = decrypt_ecb(profile, key)
+    decrypted = pkcs7_unpad(decrypted)
     decrypted = decrypted.decode('ascii')
     print('decrypted: ', decrypted)
     return parse_kv(decrypted)

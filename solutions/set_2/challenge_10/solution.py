@@ -19,6 +19,7 @@ def aes_cbc_decrypt(ciphertext, key, iv):
     prior_ciphertext = iv
     for block in blocks:
         plaintext = decrypt_ecb(block, key)
+        assert len(plaintext) == len(prior_ciphertext)
         plaintext = bytes([a ^ b for a, b in zip(plaintext, prior_ciphertext)])
         prior_ciphertext = block
         output.append(plaintext)
@@ -29,7 +30,7 @@ def aes_cbc_encrypt(input, key, iv):
     output = []
     prior_ciphertext = iv
     for block in blocks:
-        block = pkcs7_padding(block, len(key))
+        assert len(block) == len(prior_ciphertext)
         block = bytes([a ^ b for a, b in zip(block, prior_ciphertext)])
         ciphertext = aes_ecb_encrypt(block, key)
         prior_ciphertext = ciphertext
