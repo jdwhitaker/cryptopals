@@ -1,7 +1,9 @@
-from cryptopals import aes_128_ecb, base64_decode, classify_ecb_cbc
+import cryptopals
+
+AES_KEY = cryptopals.get_aes_key()
 
 def aes_128_ecb_oracle(chosen_string, plaintext):
-    return aes_128_ecb(chosen_string, plaintext)
+    return cryptopals.aes_128_ecb(chosen_string, plaintext, AES_KEY)
 
 def get_block_length(plaintext):
     prior_length = len(aes_128_ecb_oracle(b'', plaintext))
@@ -51,11 +53,11 @@ def crack_ecb(block_length, plaintext):
 
 def test_solution():
     plaintext_b64 = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
-    plaintext = base64_decode(plaintext_b64)
+    plaintext = cryptopals.base64_decode(plaintext_b64)
     block_length = get_block_length(plaintext)
     print(block_length)
     ciphertext = aes_128_ecb_oracle(b'A'*1000, plaintext)
-    algo = classify_ecb_cbc(ciphertext)
+    algo = cryptopals.classify_ecb_cbc(ciphertext)
     assert algo == "ecb"
     cracked = crack_ecb(block_length, plaintext)
     assert cracked == plaintext

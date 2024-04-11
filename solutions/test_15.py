@@ -1,6 +1,11 @@
 import pytest
 import cryptopals
 
+def test_solution0():
+    with pytest.raises(Exception):
+        input = b"ICE ICE BABY\x04\x04\x04\x00"
+        cryptopals.pkcs7_unpad(input)
+
 def test_solution1():
     input = b"ICE ICE BABY\x04\x04\x04\x04"
     output = cryptopals.pkcs7_unpad(input)

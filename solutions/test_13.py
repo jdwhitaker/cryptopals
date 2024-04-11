@@ -1,7 +1,7 @@
 import pytest
 import cryptopals
 
-key = cryptopals.get_random_aes_key()
+key = cryptopals.get_aes_key()
 
 def parse_kv(s):
     items = s.split('&')

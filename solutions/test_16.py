@@ -4,7 +4,7 @@ import cryptopals
 import random
 import pprint
 
-key = cryptopals.get_random_aes_key()
+key = cryptopals.get_aes_key()
 iv = random.randbytes(16)
 
 def oracle(attacker_controlled):

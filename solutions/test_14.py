@@ -7,13 +7,12 @@ random.seed(0)
 
 TARGET_BYTES = b"these are the target bytes"
 RANDOM_PREFIX = random.randbytes(random.randint(100,200))
+AES_KEY = cryptopals.get_aes_key()
 
 def oracle(attacker_controlled):
-    random_key = cryptopals.get_random_aes_key()
     input = b"".join([RANDOM_PREFIX, attacker_controlled, TARGET_BYTES])
     input = cryptopals.pkcs7_padding(input, 16)
-    return cryptopals.aes_ecb_encrypt(input, random_key)
-
+    return cryptopals.aes_ecb_encrypt(input, AES_KEY)
 
 padding_length = None
 

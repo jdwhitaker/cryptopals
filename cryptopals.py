@@ -302,6 +302,8 @@ def decrypt_ecb(ciphertext, key):
 
 def pkcs7_unpad(input):
     n = input[-1]
+    if n == 0:
+        raise Exception("Invalid padding")
     for i in range(n):
         if input[-(i+1)] != n:
             raise Exception("Invalid padding")
@@ -356,7 +358,7 @@ def aes_cbc_encrypt(input, key, iv):
         output.append(ciphertext)
     return b"".join(output)
 
-def generate_random_aes_key():
+def get_aes_key():
     return random.randbytes(16)
 
 def encryption_oracle(input):
@@ -364,13 +366,13 @@ def encryption_oracle(input):
     random_post = random.randbytes(random.randint(5,10))
     input = random_before + input + random_post
     input = pkcs7_padding(input, 16)
-    key = generate_random_aes_key()
+    key = get_aes_key()
     algo = random.randint(0,1)
     if algo == 0:
         output = aes_ecb_encrypt(input, key)
         return (output, 'ecb')
     else:
-        iv = generate_random_aes_key()
+        iv = get_aes_key()
         output = aes_cbc_encrypt(input, key, iv)
         return (output, 'cbc')
 
@@ -387,17 +389,9 @@ def classify_ecb_cbc(input):
     else:
         return 'cbc'
 
-key = None
-def get_random_aes_key():
-    global key
-    if key == None:
-        key = random.randbytes(16)
-    return key
-
-def aes_128_ecb(chosen_string, plaintext):
+def aes_128_ecb(chosen_string, plaintext, key):
     input = chosen_string + plaintext
     input = pkcs7_padding(input, 16)
-    key = get_random_aes_key()
     output = aes_ecb_encrypt(input, key)
     return output
 
