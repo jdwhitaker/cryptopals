@@ -2,8 +2,15 @@ import cryptopals
 
 AES_KEY = cryptopals.get_aes_key()
 
+
+def aes_128_ecb(chosen_string, plaintext, key):
+    input = chosen_string + plaintext
+    input = cryptopals.pkcs7_padding(input, 16)
+    output = cryptopals.aes_ecb_encrypt(input, key)
+    return output
+
 def aes_128_ecb_oracle(chosen_string, plaintext):
-    return cryptopals.aes_128_ecb(chosen_string, plaintext, AES_KEY)
+    return aes_128_ecb(chosen_string, plaintext, AES_KEY)
 
 def get_block_length(plaintext):
     prior_length = len(aes_128_ecb_oracle(b'', plaintext))

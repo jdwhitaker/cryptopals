@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
 )
 import random
+import struct
 
 random.seed(0)
 
@@ -361,21 +362,6 @@ def aes_cbc_encrypt(input, key, iv):
 def get_aes_key():
     return random.randbytes(16)
 
-def encryption_oracle(input):
-    random_before = random.randbytes(random.randint(5,10))
-    random_post = random.randbytes(random.randint(5,10))
-    input = random_before + input + random_post
-    input = pkcs7_padding(input, 16)
-    key = get_aes_key()
-    algo = random.randint(0,1)
-    if algo == 0:
-        output = aes_ecb_encrypt(input, key)
-        return (output, 'ecb')
-    else:
-        iv = get_aes_key()
-        output = aes_cbc_encrypt(input, key, iv)
-        return (output, 'cbc')
-
 def classify_ecb_cbc(input):
     freqdist = {}
     blocks = to_blocks(input, 16)
@@ -389,10 +375,20 @@ def classify_ecb_cbc(input):
     else:
         return 'cbc'
 
-def aes_128_ecb(chosen_string, plaintext, key):
-    input = chosen_string + plaintext
-    input = pkcs7_padding(input, 16)
-    output = aes_ecb_encrypt(input, key)
+def aes_ctr_keystream(key, nonce, length):
+    keystream = []
+    ctr = 0
+    while (len(keystream) * 16) < length:
+        input = b"".join([nonce, struct.pack("<Q", ctr)])
+        assert len(input) == 16
+        k = aes_ecb_encrypt(input, key)
+        keystream.append(k)
+        ctr += 1
+    keystream = b"".join(keystream)
+    keystream = keystream[:length]
+    return keystream
+
+def aes_ctr_encrypt(input, key, nonce):
+    keystream = aes_ctr_keystream(key, nonce, len(input))
+    output = fixed_xor(input, keystream)
     return output
-
-
