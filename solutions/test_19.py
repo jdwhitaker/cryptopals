@@ -5,7 +5,6 @@ def test_19():
     null_nonce = bytes([0 for _ in range(8)])
     with open('./res/19.txt', 'r') as f:
         plaintexts = [cryptopals.base64_decode(i) for i in f.read().split('\n')]
-    vectorized_plaintext_corpus = cryptopals.vectorize(b''.join(plaintexts))
     ciphertexts = [cryptopals.aes_ctr_encrypt(i, random_aes_key, null_nonce) for i in plaintexts]
     ciphertexts = sorted(ciphertexts, key = lambda i: -len(i))
     keystream = []
@@ -17,7 +16,7 @@ def test_19():
             # get a guess of what the characters at this index are
             crack_guesses = bytes([key ^ ciphertext[i] for ciphertext in eligible_ciphertexts])
             # do statistical analysis of the guesses to see which guess is right
-            performance = cryptopals.decryption_metric(vectorized_plaintext_corpus, cryptopals.vectorize(crack_guesses))
+            performance = cryptopals.decryption_metric(cryptopals.vectorized_plaintext_corpus, cryptopals.vectorize(crack_guesses))
             key_performance.append((key, performance))
         key_performance.sort(key = lambda i: -i[1])
         keystream.append(key_performance[0][0])
