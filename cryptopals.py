@@ -117,8 +117,6 @@ def crack_single_xor_cipher(bs):
     return outputs[0][0]
 
 def detect_single_character_xor(inputs):
-    with open('./res/6_test.txt', 'rb') as f:
-        plaintext_corpus = f.read()
     outputs = []
     for input in inputs:
         bytes = hex_to_bytes(input)
@@ -363,3 +361,44 @@ def aes_ctr_encrypt(input, key, nonce):
 
 def decryption_metric(vectorized_plaintext_corpus, vectorized_possible_plaintext):
     return cosine_similarity(vectorized_plaintext_corpus, vectorized_possible_plaintext)[0][0]
+
+class MersenneTwisterRNG:
+    n = 624
+    m = 397
+    w = 32
+    r = 31
+    f = 1812433253
+    u = 11
+    s = 7
+    t = 15
+    l = 18
+    a = 0x9908b0df
+    b = 0x9d2c5680
+    c = 0xefc60000
+    UMASK = (0xffffffff << r) % (2**w)
+    LMASK = (0xffffffff >> (w-r))
+    state = [0 for _ in range(n)]
+    i = 0
+
+    def __init__(self, seed):
+        self.state[0] = seed
+        for i in range(1, self.n):
+            x_prior = self.state[i-1]
+            self.state[i]  = (self.f * (x_prior ^ (x_prior >> (self.w-2))) + i) % (2**self.w)
+
+    def random(self):
+        k = self.i
+        j = (k - (self.n - 1)) % self.n
+        x = (self.state[k] & self.UMASK) | (self.state[j] & self.LMASK)
+        xA = x >> 1
+        if (x & 0x00000001): xA ^= self.a;
+        j = (k - (self.n-self.m)) % self.n
+        x = self.state[j] ^ xA;
+        self.state[k] = x
+        k = (k + 1) % self.n
+        self.i = k
+        y = x ^ (x >> self.u)
+        y = y ^ (((y << self.s) % (2**self.w)) & self.b)
+        y = y ^ (((y << self.t) % (2**self.w)) & self.c)
+        z = y ^ (y >> self.l)
+        return z % (2**self.w)
