@@ -377,10 +377,10 @@ class MersenneTwisterRNG:
     c = 0xefc60000
     UMASK = (0xffffffff << r) % (2**w)
     LMASK = (0xffffffff >> (w-r))
-    state = [0 for _ in range(n)]
     i = 0
 
     def __init__(self, seed):
+        self.state = [0 for _ in range(self.n)]
         self.state[0] = seed
         for i in range(1, self.n):
             x_prior = self.state[i-1]
