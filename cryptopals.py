@@ -402,3 +402,68 @@ class MersenneTwisterRNG:
         y = y ^ (((y << self.t) % (2**self.w)) & self.c)
         z = y ^ (y >> self.l)
         return z % (2**self.w)
+    
+
+
+def bit(value, indx):
+    if indx < 0: return 0
+    return (value >> indx) & 0b1
+
+def untemper(z):
+    n = 624
+    m = 397
+    w = 32
+    r = 31
+    f = 1812433253
+    u = 11
+    s = 7
+    t = 15
+    l = 18
+    a = 0x9908b0df
+    b = 0x9d2c5680
+    c = 0xefc60000
+
+    def i_shiftl_and_mask(value, shift_width, and_mask):
+        out = []
+        for i in range(w):
+            # the AND mask isn't an issue w/ lower bits
+            if i < shift_width:
+                out.append(bit(value, i))
+            # w/ higher bits, we use the lower bits that have already been solved
+            else:
+                out.append(bit(value, i) ^ (out[i-shift_width] & bit(and_mask, i)))
+        r = 0
+        for i, e in enumerate(out):
+            r += e * 2**i
+        return r
+
+    def i_shiftr(value, shift_width):
+        out = [0 for _ in range(w)]
+        for i in range(w-1,-1,-1):
+            xor = 0
+            if i+shift_width < w:
+                xor = out[i+shift_width]
+            out[i] = bit(value,i) ^ xor
+        r = 0
+        for i, e in enumerate(out):
+            r += e * 2**i
+        return r
+
+
+    y = i_shiftr(z, l)
+    y = i_shiftl_and_mask(y, t, c)
+    y = i_shiftl_and_mask(y, s, b)
+    x = i_shiftr(y, u)
+    return x
+
+
+def mt19937_ctr_encrypt(key, plaintext):
+    ct = []
+    rng = MersenneTwisterRNG(key)
+    for pt in plaintext:
+        xor = rng.random() % 2**8
+        ct.append((pt ^ xor))
+    return bytes(ct)
+
+def mt19937_ctr_decrypt(key, ciphertext):
+    return mt19937_ctr_encrypt(key, ciphertext)
