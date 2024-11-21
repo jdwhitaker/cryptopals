@@ -40,8 +40,8 @@ def extend_sha1(prior_hash, prior_message_length, extension):
 
 def test_29():
     key = cryptopals.get_aes_key()
-    message = b"i like turtles"
+    message = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"
     mac = get_mac(key, message)
     assert authn(key, message, mac)
-    crack_digest, extension = extend_sha1(mac, len(key)+len(message), b' a lot')
+    crack_digest, extension = extend_sha1(mac, len(key)+len(message), b';admin=true')
     assert authn(key, message + extension, crack_digest)
