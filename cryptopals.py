@@ -477,7 +477,5 @@ def diffie_hellman_keygen(p=DH_NIST_P, g=DH_NIST_G):
     return {"private": private, "public": public}
 
 def diffie_hellman_session(private, public, p=DH_NIST_P):
-    assert private < p
-    assert public < p
     session_key = pow(public,private,p)
     return session_key
