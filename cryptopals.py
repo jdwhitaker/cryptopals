@@ -467,3 +467,17 @@ def mt19937_ctr_encrypt(key, plaintext):
 
 def mt19937_ctr_decrypt(key, ciphertext):
     return mt19937_ctr_encrypt(key, ciphertext)
+
+DH_NIST_P = 0xffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca237327ffffffffffffffff
+DH_NIST_G = 2
+
+def diffie_hellman_keygen(p=DH_NIST_P, g=DH_NIST_G):
+    private = random.randint(0,p-1)
+    public = pow(g,private,p)
+    return {"private": private, "public": public}
+
+def diffie_hellman_session(private, public, p=DH_NIST_P):
+    assert private < p
+    assert public < p
+    session_key = pow(public,private,p)
+    return session_key
