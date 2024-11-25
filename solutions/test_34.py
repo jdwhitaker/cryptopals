@@ -12,6 +12,7 @@ def dh_send(args={}, msg=0, mitm=False):
     assert msg in [0,2,4]
     recv = dh_mitm if mitm else dh_recv
     if msg == 0:
+        sender_state = {}
         sender_state['p'] = cryptopals.DH_NIST_P
         sender_state['g'] = cryptopals.DH_NIST_G
         return recv({
@@ -22,7 +23,6 @@ def dh_send(args={}, msg=0, mitm=False):
     if msg == 2:
         sender_state['B'] = args['B']
         s = cryptopals.diffie_hellman_session(a_keys['private'], sender_state['B'], sender_state['p'])
-        s = bytes.fromhex(hex(123412341234)[2:])
         sender_state['s'] = s
         k = bytes.fromhex(sha1.sha1(s))[:16]
         sender_state['k'] = k
@@ -51,6 +51,7 @@ def dh_recv(args={}, msg=0, mitm=False):
     assert msg in [1,3]
     send = dh_mitm if mitm else dh_send
     if msg == 1:
+        receiver_state = {}
         receiver_state['p'] = args['p']
         receiver_state['g'] = args['g']
         receiver_state['A'] = args['A']
@@ -60,7 +61,6 @@ def dh_recv(args={}, msg=0, mitm=False):
         }, msg=2, mitm=mitm)
     if msg == 3:
         s = cryptopals.diffie_hellman_session(b_keys['private'], receiver_state['A'], p=receiver_state['p'])
-        s = bytes.fromhex(hex(123412341234)[2:])
         receiver_state['s'] = s
         k = bytes.fromhex(sha1.sha1(s))[:16]
         receiver_state['k'] = k
@@ -83,6 +83,7 @@ def dh_mitm(args={}, msg=0, mitm=True):
     print(mitm_state)
     assert msg in [0,1,2,3,4]
     if msg == 1: 
+        mitm_state = {}
         mitm_state['p'] = args['p']
         mitm_state['g'] = args['g']
         return dh_recv({
