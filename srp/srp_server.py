@@ -65,7 +65,6 @@ def login():
         set(ip, email, 'salt', salt)
         set(ip, email, 'v', v)
         set(ip, email, 'x', x)
-    pprint.pprint(state)
     assert msg in [1,3]
     if msg == 1:
         keys = cryptopals.diffie_hellman_keygen(p=N, g=g)

@@ -7,6 +7,7 @@ import random
 import struct
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import hashlib
 
 random.seed(0)
 
@@ -502,3 +503,11 @@ def diffie_hellman_keygen(p=DH_NIST_P, g=DH_NIST_G):
 def diffie_hellman_session(private, public, p=DH_NIST_P):
     session_key = pow(public,private,p)
     return int2bytes(session_key)
+
+
+def sha256(v):
+    if type(v) == int:
+        v = int2bytes(v)
+    hasher = hashlib.sha256()
+    hasher.update(v)
+    return hasher.digest()
