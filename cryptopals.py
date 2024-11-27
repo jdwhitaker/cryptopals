@@ -468,6 +468,20 @@ def mt19937_ctr_encrypt(key, plaintext):
 def mt19937_ctr_decrypt(key, ciphertext):
     return mt19937_ctr_encrypt(key, ciphertext)
 
+def get_hmac(key, message, hash, block_size):
+    def compute_block_sized_key(key, hash, block_size):
+        if len(key) > block_size:
+            key = hash(key)
+        if len(key) < block_size:
+            return key + b"\x00" * (block_size - len(key))
+    
+    block_sized_key = compute_block_sized_key(key, hash, block_size)
+    o_key_pad = fixed_xor(block_sized_key, b"\x5c" * block_size)
+    i_key_pad = fixed_xor(block_sized_key, b"\x36" * block_size)
+    tmp = hash(i_key_pad + message)
+    tmp2 = hash(o_key_pad + tmp)
+    return tmp2.hex()
+
 def int2bytes(n):
     i = 0
     n_ = n
